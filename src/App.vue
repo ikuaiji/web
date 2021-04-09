@@ -3,6 +3,7 @@
     <el-header>
       <el-menu :default-active="activeNav" mode="horizontal" :router="true">
         <el-menu-item index="Home" :route="{name: 'Home'}">Home</el-menu-item>
+        <el-menu-item index="Bills" :route="{name: 'Bills'}">Bills</el-menu-item>
         <el-menu-item index="About" :route="{name: 'About'}">About</el-menu-item>
       </el-menu>
     </el-header>
