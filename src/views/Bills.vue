@@ -1,4 +1,10 @@
 <template>
+  <div>
+    <el-select v-model="filter_account" @change="do_filter">
+      <el-option label="全部账户" :value="0"></el-option>
+      <el-option v-for="(accountName,accountId) of id_names.accounts" :key="accountId" :label="accountName" :value="parseInt(accountId)"></el-option>
+    </el-select>
+  </div>
   <template v-for="iter of bills_by_day" :key="iter.first" >
     <el-divider content-position="left">{{iter[0]}}</el-divider>
     <el-table :data="iter[1]" row-key="ID">
@@ -70,9 +76,9 @@
 
             <el-row>
               <el-col :span="12">
-                  <el-input size="mini" v-model="props.row.Note" clearable>
-                    <template #prefix>备注</template>
-                  </el-input>
+                <el-input size="mini" v-model="props.row.Note" clearable>
+                  <template #prefix>备注</template>
+                </el-input>
               </el-col>
               <el-col :span="5" :offset="1">
                 <el-form-item>
@@ -116,7 +122,12 @@ import axios from 'axios'
 
 export default{
   data() {
+    let account_id = parseInt(this.$route.query.account_id);
+    if (isNaN(account_id)) {
+      account_id = 0;
+    }
     return {
+      filter_account: account_id,//过滤的账户
       bills_by_day: new Map(),
       id_names:{},
     }
@@ -133,28 +144,35 @@ export default{
       //TODO
       console.log(bill)
     },
+    do_filter(){
+      this.$router.push({query:{account_id: this.filter_account}})
+      this.load_data();
+    },
+    load_data(){
+      let that=this
+      axios.get("/bills", {params: {account_id: this.filter_account}}).then(function (response) {
+        if (response.data.code!=0) {
+          //todo:提示错误信息
+          return
+        }
+
+        that.id_names = response.data.data.id_names
+
+        //账目需要按日期分组
+        let bills_by_day = new Map()
+        for (const bill of response.data.data.bills) {
+          let day = bill.BillAt.substring(0,10)
+          if (!bills_by_day.has(day)) {
+            bills_by_day.set(day,new Array())
+          }
+          bills_by_day.get(day).push(bill)
+        }
+        that.bills_by_day = bills_by_day
+      })
+    }
   },
   mounted () {
-    let that=this
-    axios.get("/bills").then(function (response) {
-      if (response.data.code!=0) {
-        //todo:提示错误信息
-        return
-      }
-
-      that.id_names = response.data.data.id_names
-
-      //账目需要按日期分组
-      let bills_by_day = new Map()
-      for (const bill of response.data.data.bills) {
-        let day = bill.BillAt.substring(0,10)
-        if (!bills_by_day.has(day)) {
-          bills_by_day.set(day,new Array())
-        }
-        bills_by_day.get(day).push(bill)
-      }
-      that.bills_by_day = bills_by_day
-    })
+    this.load_data();
   }
 }
 </script>
