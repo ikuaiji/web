@@ -11,6 +11,10 @@
   </el-container>
 </template>
 
+<style>
+*{font-family:'monaco';}
+</style>
+
 <script>
 export default{
   computed: {
