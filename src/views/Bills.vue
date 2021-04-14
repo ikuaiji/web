@@ -1,120 +1,55 @@
 <template>
-  <div>
+  <el-row>
     <el-select v-model="filter_account" @change="do_filter">
       <el-option label="全部账户" :value="0"></el-option>
       <el-option v-for="(accountName,accountId) of id_names.accounts" :key="accountId" :label="accountName" :value="parseInt(accountId)"></el-option>
     </el-select>
-  </div>
-  <template v-for="iter of bills_by_day" :key="iter.first" >
-    <el-divider content-position="left">{{iter[0]}}</el-divider>
-    <el-table :data="iter[1]" row-key="ID">
-      <el-table-column type="expand" look="展开">
-        <template #default="props">
-          <el-form inline size="mini">
-            <el-row>
-              <el-col :span="6">
-                <el-form-item>
-                  <el-select v-model="props.row.CategoryId">
-                    <template #prefix>科目</template>
-                    <el-option label="未设置" :value="0"></el-option>
-                    <el-option v-for="(categoryName,categoryId) of id_names.categories" :key="categoryId" :label="categoryName" :value="parseInt(categoryId)"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item>
-                  <el-select v-model="props.row.AccountId">
-                    <template #prefix>账户</template>
-                    <el-option label="未设置" :value="0"></el-option>
-                    <el-option v-for="(accountName,accountId) of id_names.accounts" :key="accountId" :label="accountName" :value="parseInt(accountId)"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item>
-                  <el-select v-model="props.row.MemberId">
-                    <template #prefix>成员</template>
-                    <el-option label="未设置" :value="0"></el-option>
-                    <el-option v-for="(memberName,memberId) of id_names.members" :key="memberId" :label="memberName" :value="parseInt(memberId)"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item>
-                  <el-input :controls="false" :precision="2" type="number" v-model="props.row.Amount">
-                    <template #prefix>金额</template>
-                  </el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
+  </el-row>
 
-            <el-row>
-              <el-col :span="6">
-                <el-form-item>
-                  <el-select v-model="props.row.ProjectId">
-                    <template #prefix>项目</template>
-                    <el-option label="未设置" :value="0"></el-option>
-                    <el-option v-for="(projectName,projectId) of id_names.projects" :key="projectId" :label="projectName" :value="parseInt(projectId)"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item>
-                  <el-select v-model="props.row.StoreId">
-                    <template #prefix>商户</template>
-                    <el-option label="未设置" :value="0"></el-option>
-                    <el-option v-for="(storeName,storeId) of id_names.stores" :key="storeId" :label="storeName" :value="parseInt(storeId)"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item>
-                  <el-date-picker size="mini" v-model="props.row.BillAt" type="datetime"></el-date-picker>
-                </el-form-item>
-              </el-col>
-            </el-row>
+  <el-table :data="bills_tree" default-expand-all row-key="ID" :indent="0">
+    <el-table-column label="科目" width="140" align="center">
+      <template #default="scope">
+        <strong v-if="scope.row.children">{{scope.row.ID}}</strong>
+        <template v-else>{{idToName("categories", scope.row.CategoryId)}}</template>
+      </template>
+    </el-table-column>
 
-            <el-row>
-              <el-col :span="12">
-                <el-input size="mini" v-model="props.row.Note" clearable>
-                  <template #prefix>备注</template>
-                </el-input>
-              </el-col>
-              <el-col :span="5" :offset="1">
-                <el-form-item>
-                  <el-button type="primary" icon="el-icon-upload" @click="saveBill(props.row)">保存</el-button>
-                  <el-button type="danger" icon="el-icon-delete" @click="removeBill(props.row)">删除</el-button>
-                </el-form-item>
-              </el-col>
-            </el-row>
+    <el-table-column label="类型" width="60" prop="Type">
+      <template #default="scope">
+        <el-tag effect="plain" size="mini" v-if="scope.row.Type=='income'" type="success">收</el-tag>
+        <el-tag effect="plain" size="mini" v-if="scope.row.Type=='outcome'" type="warning">支</el-tag>
+        <el-tag effect="plain" size="mini" v-if="scope.row.Type=='alter'" type="danger">改</el-tag>
+        <el-tag effect="plain" size="mini" v-if="scope.row.Type=='transfer'" type="info">转</el-tag>
+      </template>
+    </el-table-column>
 
-          </el-form>
-        </template>
-      </el-table-column>
+    <el-table-column label="金额" width="100" prop="Amount" align="right"></el-table-column>
 
-      <el-table-column label="科目" width="120" align="center">
-        <template #default="scope">{{ idToName("categories", scope.row.CategoryId) }}</template>
-      </el-table-column>
+    <el-table-column label="账号" width="120" prop="AccountId" align="center">
+      <template #default="scope">{{ idToName("accounts", scope.row.AccountId) }}</template>
+    </el-table-column>
 
-      <el-table-column label="类型" width="60" prop="Type">
-        <template #default="scope">
-          <el-tag v-if="scope.row.Type=='income'" type="success">收</el-tag>
-          <el-tag v-if="scope.row.Type=='outcome'" type="warning">支</el-tag>
-          <el-tag v-if="scope.row.Type=='alter'" type="danger">改</el-tag>
-          <el-tag v-if="scope.row.Type=='transfer'" type="info">转</el-tag>
-        </template>
-      </el-table-column>
+    <el-table-column label="成员" width="120" align="center"><template #default="scope">{{ idToName("members", scope.row.MemberId) }}</template></el-table-column>
 
-      <el-table-column label="金额" width="100" prop="Amount" align="right"></el-table-column>
+    <el-table-column label="商户/对方账号" width="150" align="center">
+      <template #default="scope">
+        <template v-if="scope.row.Type!='transfer'">{{ idToName("stores", scope.row.StoreId) }}</template>
+        <template v-else>{{ idToName("accounts", scope.row.Account2Id) }}</template>
+      </template>
+    </el-table-column>
 
-      <el-table-column label="账号" width="120" align="center"><template #default="scope">{{ idToName("accounts", scope.row.AccountId) }}</template></el-table-column>
-
-      <el-table-column label="成员" width="120" align="center"><template #default="scope">{{ idToName("members", scope.row.MemberId) }}</template></el-table-column>
-
-      <el-table-column label="备注" prop="Note"></el-table-column>
-
-    </el-table>
-  </template>
+    <el-table-column label="备注">
+      <template #default="scope">
+        <el-space v-if="scope.row.children">
+          <el-tag effect="plain" size="mini" type="success">收:{{scope.row.Summary.Income}}</el-tag>
+          <el-tag effect="plain" size="mini" type="warning">支:{{scope.row.Summary.Outcome}}</el-tag>
+          <el-tag effect="plain" size="mini" type="info"   >转:{{scope.row.Summary.Transfer}}</el-tag>
+          <el-tag effect="plain" size="mini" type="danger" >改:{{scope.row.Summary.Alter}}</el-tag>
+        </el-space>
+        <template v-else>{{scope.row.Note}}</template>
+      </template>
+    </el-table-column>
+  </el-table>
 </template>
 
 <script>
@@ -129,12 +64,20 @@ export default{
     return {
       filter_account: account_id,//过滤的账户
       bills_by_day: new Map(),
+      bills_tree:[],
       id_names:{},
     }
   },
   methods:{
     idToName(type,id) {
-      return this.id_names[type][id]
+      let name = this.id_names[type][id]
+      if (name) {
+        return name
+      }
+
+      if (type=="categories") {
+        return '-'
+      }
     },
     saveBill(bill) {
       //TODO
@@ -167,7 +110,29 @@ export default{
           }
           bills_by_day.get(day).push(bill)
         }
+
+        let bills_tree = []
+        for (let [day, bills] of bills_by_day) {
+          let total = 0
+          let income = 0
+          let outcome= 0
+          let transfer= 0
+          let alter= 0
+          for (let bill of bills) {
+            total += bill.Amount
+            switch(bill.Type) {
+              case "income": income += bill.Amount; break
+              case "outcome": outcome += bill.Amount; break
+              case "transfer": transfer += bill.Amount; break
+              case "alter": alter += bill.Amount; break
+            }
+          }
+          let summary = {Total:total, Income:income, Outcome: outcome, Transfer: transfer, Alter:alter}
+          bills_tree.push({ID: day, Summary:summary, children: bills})
+        }
+
         that.bills_by_day = bills_by_day
+        that.bills_tree = bills_tree
       })
     }
   },
