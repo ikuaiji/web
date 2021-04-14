@@ -5,6 +5,7 @@
         <el-menu-item index="Home" :route="{name: 'Home'}">概览</el-menu-item>
         <el-menu-item index="Bills" :route="{name: 'Bills'}">记一笔</el-menu-item>
         <el-menu-item index="Accounts" :route="{name: 'Accounts'}">账户</el-menu-item>
+        <el-menu-item index="Reports" :route="{name: 'Reports'}">报表</el-menu-item>
       </el-menu>
     </el-header>
     <el-main><router-view/></el-main>
