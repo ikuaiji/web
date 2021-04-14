@@ -10,7 +10,7 @@
     </el-space>
   </el-row>
 
-  <el-table :data="bills_tree" default-expand-all row-key="ID" :indent="0" :row-class-name="tableRowClassName">
+  <el-table :data="bills_tree" default-expand-all row-key="ID" :indent="0" size="mini" :row-class-name="tableRowClassName">
     <el-table-column label="科目" width="140" align="center">
       <template #default="scope">
         <strong v-if="scope.row.children">{{scope.row.ID}}</strong>
