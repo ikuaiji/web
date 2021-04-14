@@ -1,12 +1,16 @@
 <template>
   <el-row>
-    <el-select v-model="filter_account" @change="do_filter">
-      <el-option label="全部账户" :value="0"></el-option>
-      <el-option v-for="(accountName,accountId) of id_names.accounts" :key="accountId" :label="accountName" :value="parseInt(accountId)"></el-option>
-    </el-select>
+    <el-space>
+      <el-select v-model="filter_account" @change="do_filter">
+        <el-option label="全部账户" :value="0"></el-option>
+        <el-option v-for="(accountName,accountId) of id_names.accounts" :key="accountId" :label="accountName" :value="parseInt(accountId)"></el-option>
+      </el-select>
+
+      <el-date-picker v-model="filter_month" :default-value="filter_month" type="month" placeholder="选择月" @change="do_filter"></el-date-picker>
+    </el-space>
   </el-row>
 
-  <el-table :data="bills_tree" default-expand-all row-key="ID" :indent="0">
+  <el-table :data="bills_tree" default-expand-all row-key="ID" :indent="0" :row-class-name="tableRowClassName">
     <el-table-column label="科目" width="140" align="center">
       <template #default="scope">
         <strong v-if="scope.row.children">{{scope.row.ID}}</strong>
@@ -52,6 +56,11 @@
   </el-table>
 </template>
 
+<style>
+/*每日汇总行的样式*/
+.el-table .summary-row{background: #f5f7fa;}
+</style>
+
 <script>
 import axios from 'axios'
 
@@ -61,7 +70,18 @@ export default{
     if (isNaN(account_id)) {
       account_id = 0;
     }
+
+    //从URL Query中初始化
+    let month = new Date()
+    if (this.$route.query.year) {
+      month.setYear(this.$route.query.year)
+    }
+    if (this.$route.query.month) {
+      month.setMonth(this.$route.query.month)
+    }
+
     return {
+      filter_month: month,
       filter_account: account_id,//过滤的账户
       bills_by_day: new Map(),
       bills_tree:[],
@@ -79,6 +99,12 @@ export default{
         return '-'
       }
     },
+    tableRowClassName(param) {
+      if (param.row.children) {
+        return 'summary-row'
+      }
+      return ''
+    },
     saveBill(bill) {
       //TODO
       console.log(bill)
@@ -88,12 +114,23 @@ export default{
       console.log(bill)
     },
     do_filter(){
-      this.$router.push({query:{account_id: this.filter_account}})
+      const query = {
+        account_id: this.filter_account,
+        year: this.filter_month.getFullYear(),
+        month: this.filter_month.getMonth(),
+      }
+      this.$router.push({query:query})
       this.load_data();
     },
     load_data(){
       let that=this
-      axios.get("/bills", {params: {account_id: this.filter_account}}).then(function (response) {
+      const params = {
+        account_id: this.filter_account,
+        year: this.filter_month.getFullYear(),
+        month: this.filter_month.getMonth() + 1,//Month是从0开始的
+      }
+
+      axios.get("/bills", {params: params}).then(function (response) {
         if (response.data.code!=0) {
           //todo:提示错误信息
           return
