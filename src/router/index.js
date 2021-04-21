@@ -3,6 +3,7 @@ import Home from '../views/Home.vue'
 import Bills from '../views/Bills.vue'
 import Bill from '../views/Bill.vue'
 import Accounts from '../views/Accounts.vue'
+import Account from '../views/Account.vue'
 import Reports from '../views/Reports.vue'
 
 const routes = [
@@ -26,6 +27,12 @@ const routes = [
     path: '/accounts',
     name: 'Accounts',
     component: Accounts
+  },
+  {
+    path: '/account/:id',
+    name: 'Account',
+    props: true,
+    component: Account
   },
   {
     path: '/reports',

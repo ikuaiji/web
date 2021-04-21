@@ -3,13 +3,12 @@
     <el-tab-pane label="银行账户">
       <el-space wrap size="large">
         <el-card v-for="iter of accounts.bank" :key="iter.ID">
-          <template #header>{{iter.Name}}</template>
+          <template #header>
+            {{iter.Name}}
+            <el-button class="button" type="text" icon="el-icon-edit" @click="edit_account(iter.ID)">编辑</el-button>
+          </template>
 
           <h1><span style="color:gray;font-size:10px;">CNY:</span>{{get_balance(iter.ID)}}</h1>
-          <el-button class="button" type="text" icon="el-icon-edit">编辑</el-button>
-          <el-button class="button" type="text" icon="el-icon-delete">删除</el-button>
-          <el-button class="button" type="text" icon="el-icon-view">隐藏</el-button>
-          <el-button class="button" type="text" icon="el-icon-document">对账</el-button>
         </el-card>
       </el-space>
     </el-tab-pane>
@@ -17,13 +16,12 @@
     <el-tab-pane label="虚拟账户">
       <el-space wrap size="large">
         <el-card v-for="iter of accounts.virtual" :key="iter.ID" >
-          <template #header>{{iter.Name}}</template>
+          <template #header>
+            {{iter.Name}}
+            <el-button class="button" type="text" icon="el-icon-edit" @click="edit_account(iter.ID)">编辑</el-button>
+          </template>
 
           <h1><span style="color:gray;font-size:10px;">CNY:</span>{{get_balance(iter.ID)}}</h1>
-          <el-button class="button" type="text" icon="el-icon-edit">编辑</el-button>
-          <el-button class="button" type="text" icon="el-icon-delete">删除</el-button>
-          <el-button class="button" type="text" icon="el-icon-view">隐藏</el-button>
-          <el-button class="button" type="text" icon="el-icon-document">对账</el-button>
         </el-card>
       </el-space>
     </el-tab-pane>
@@ -31,12 +29,12 @@
     <el-tab-pane label="借贷账户">
       <el-space wrap size="large">
         <el-card v-for="iter of accounts.debt" :key="iter.ID" >
-          <template #header>{{iter.Name}}</template>
+          <template #header>
+            {{iter.Name}}
+            <el-button class="button" type="text" icon="el-icon-edit" @click="edit_account(iter.ID)">编辑</el-button>
+          </template>
 
           <h1><span style="color:gray;font-size:10px;">CNY:</span>{{get_balance(iter.ID)}}</h1>
-          <el-button class="button" type="text" icon="el-icon-edit">编辑</el-button>
-          <el-button class="button" type="text" icon="el-icon-delete">删除</el-button>
-          <el-button class="button" type="text" icon="el-icon-view">隐藏</el-button>
           <el-button class="button" type="text" icon="el-icon-document">对账</el-button>
         </el-card>
       </el-space>
@@ -62,9 +60,8 @@ export default{
     get_balance(id) {
       return Math.round(this.account_balances[id] * 100)/100
     },
-    saveBill(bill) {
-      //TODO
-      console.log(bill)
+    edit_account(id) {
+      this.$router.push({name: 'Account', params: {id: id}})
     },
   },
   mounted () {
