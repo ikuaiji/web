@@ -10,12 +10,16 @@
     </el-space>
   </el-row>
 
-  <el-table :data="bills_tree" default-expand-all row-key="ID" :indent="0" size="mini" :row-class-name="tableRowClassName">
-    <el-table-column label="科目" width="140" align="center">
+  <el-table :data="bills_tree" default-expand-all row-key="ID" size="mini" highlight-current-row>
+    <el-table-column label="时间" width="140">
       <template #default="scope">
         <strong v-if="scope.row.children">{{scope.row.ID}}</strong>
-        <template v-else>{{idToName("categories", scope.row.CategoryId)}}</template>
+        <template v-else>{{scope.row.BillAt.substring(11,19)}}</template>
       </template>
+    </el-table-column>
+
+    <el-table-column label="科目" width="140" align="center">
+      <template #default="scope">{{idToName("categories", scope.row.CategoryId)}}</template>
     </el-table-column>
 
     <el-table-column label="类型" width="60" prop="Type">
@@ -42,7 +46,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="备注">
+    <el-table-column label="备注" :show-overflow-tooltip="true">
       <template #default="scope">
         <el-space v-if="scope.row.children">
           <el-tag effect="plain" size="mini" type="success">收:{{scope.row.Summary.Income}}</el-tag>
@@ -98,14 +102,7 @@ export default{
   },
   methods:{
     idToName(type,id) {
-      let name = this.id_names[type][id]
-      if (name) {
-        return name
-      }
-
-      if (type=="categories") {
-        return '-'
-      }
+      return this.id_names[type][id]
     },
     tableRowClassName(param) {
       if (param.row.children) {
