@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import Bills from '../views/Bills.vue'
+import Bill from '../views/Bill.vue'
 import Accounts from '../views/Accounts.vue'
 import Reports from '../views/Reports.vue'
 
@@ -14,6 +15,12 @@ const routes = [
     path: '/bills',
     name: 'Bills',
     component: Bills
+  },
+  {
+    path: '/bill/:id',
+    name: 'Bill',
+    props: true,
+    component: Bill
   },
   {
     path: '/accounts',

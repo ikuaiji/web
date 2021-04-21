@@ -53,12 +53,20 @@
         <template v-else>{{scope.row.Note}}</template>
       </template>
     </el-table-column>
+
+    <el-table-column label="-" width="120">
+      <template #default="scope">
+        <router-link :to="{name:'Bill', params:{id: scope.row.ID}}" v-if="!scope.row.children">
+          <el-button icon="el-icon-edit" plaint size="mini"></el-button>
+        </router-link>
+      </template>
+    </el-table-column>
   </el-table>
 </template>
 
 <style>
 /*每日汇总行的样式*/
-.el-table .summary-row{background: #f5f7fa;}
+.el-table .summary-row{background: #f5f7fa;color:blue;font-size:1.2em;}
 </style>
 
 <script>
