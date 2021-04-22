@@ -33,7 +33,7 @@ export default{
   methods:{
     load_data(){
       let that=this
-      axios.get("/api/account/" + this.id).then(function (response) {
+      axios.get("api/account/" + this.id).then(function (response) {
         if (response.data.code!=0) {
           //todo:提示错误信息
           return
@@ -44,7 +44,7 @@ export default{
     },
     saveaccount(){
       let that=this
-      axios.post("/api/account/" + this.id, this.account).then(function (response) {
+      axios.post("api/account/" + this.id, this.account).then(function (response) {
         if (response.data.code!=0) {
           //todo:提示错误信息
           return

@@ -135,7 +135,7 @@ export default{
         month: this.filter_month.getMonth() + 1,//Month是从0开始的
       }
 
-      axios.get("/api/bills", {params: params}).then(function (response) {
+      axios.get("api/bills", {params: params}).then(function (response) {
         if (response.data.code!=0) {
           //todo:提示错误信息
           return

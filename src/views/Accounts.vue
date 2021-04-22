@@ -67,7 +67,7 @@ export default{
   mounted () {
     let that=this
 
-    axios.get("/api/account_balances").then(function (response) {
+    axios.get("api/account_balances").then(function (response) {
       if (response.data.code!=0) {
         //todo:提示错误信息
         return
@@ -76,7 +76,7 @@ export default{
       that.account_balances = response.data.data
     })
 
-    axios.get("/api/accounts").then(function (response) {
+    axios.get("api/accounts").then(function (response) {
       if (response.data.code!=0) {
         //todo:提示错误信息
         return

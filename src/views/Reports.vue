@@ -59,7 +59,7 @@ export default{
     },
     async loadCategories(){
       let that=this
-      await axios.get("/api/categories").then(function (response) {
+      await axios.get("api/categories").then(function (response) {
         if (response.data.code!=0) {
           //todo:提示错误信息
           return
@@ -85,7 +85,7 @@ export default{
         year: this.filter_month.getFullYear(),
         month: this.filter_month.getMonth() + 1,//Month是从0开始的
       }
-      await axios.get("/api/category_sums", {params: params}).then(function (response) {
+      await axios.get("api/category_sums", {params: params}).then(function (response) {
         if (response.data.code!=0) {
           //todo:提示错误信息
           return

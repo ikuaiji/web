@@ -71,7 +71,7 @@ export default{
   methods:{
     load_data(){
       let that=this
-      axios.get("/api/bill/" + this.id).then(function (response) {
+      axios.get("api/bill/" + this.id).then(function (response) {
         if (response.data.code!=0) {
           //todo:提示错误信息
           return
@@ -83,7 +83,7 @@ export default{
     },
     saveBill(){
       let that=this
-      axios.post("/api/bill/" + this.id, this.bill).then(function (response) {
+      axios.post("api/bill/" + this.id, this.bill).then(function (response) {
         if (response.data.code!=0) {
           //todo:提示错误信息
           return
