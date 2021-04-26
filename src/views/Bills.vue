@@ -102,7 +102,23 @@ export default{
   },
   methods:{
     idToName(type,id) {
-      return this.id_names[type][id]
+      if (id == null) {
+        return
+      }
+
+      let name = this.id_names[type][id]
+      if (name != null) {
+        return name
+      }
+
+      if(type=="accounts") {
+        return "未知账户"
+      }
+      if(type=="categories") {
+        return "未分类"
+      }
+
+      return "-"
     },
     tableRowClassName(param) {
       if (param.row.children) {
