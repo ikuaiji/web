@@ -52,7 +52,7 @@
 
     <el-form-item>
       <el-button icon="el-icon-folder-checked" type="primary" @click="saveBill">保存</el-button>
-      <el-button icon="el-icon-delete" type="danger" size="small">删除</el-button>
+      <el-button icon="el-icon-delete" type="danger" @click="deleteBill">删除</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -83,7 +83,18 @@ export default{
     },
     saveBill(){
       let that=this
-      axios.post("api/bill/" + this.id, this.bill).then(function (response) {
+      axios.put("api/bill/" + this.id, this.bill).then(function (response) {
+        if (response.data.code!=0) {
+          //todo:提示错误信息
+          return
+        }
+
+        that.$router.go(-1)
+      })
+    },
+    deleteBill(){
+      let that=this
+      axios.delete("api/bill/" + this.id, this.bill).then(function (response) {
         if (response.data.code!=0) {
           //todo:提示错误信息
           return
