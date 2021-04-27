@@ -91,8 +91,6 @@ export default{
           return
         }
 
-        console.log(that.category_id_names)
-        console.log(that.category_parent_id_names)
         //遍历各科目的总金额，并按父科目分组
         let bills_by_parent_category_name=new Map()
         for (let category_id in response.data.data) {
@@ -107,15 +105,11 @@ export default{
           bills_by_parent_category_name.get(category_parent_name).push({Name: category_name, Amount: amount})
         }
 
-        console.log("bills_by_parent_category_name",bills_by_parent_category_name)
-
         let bills_by_category = []
         for (let [category_parent_name, bills] of bills_by_parent_category_name) {
           bills_by_category.push({ParentName: category_parent_name, children: bills})
         }
 
-        console.log("bills_by_category",bills_by_category)
-        console.log(bills_by_category)
         that.bills_by_category = bills_by_category
       })
 
