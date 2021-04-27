@@ -136,10 +136,14 @@ export default{
     },
     do_filter(){
       const query = {
-        account_id: this.filter_account,
         year: this.filter_month.getFullYear(),
         month: this.filter_month.getMonth(),
       }
+
+      if (this.filter_account>0) {
+        query.account_id = this.filter_account
+      }
+
       this.$router.push({query:query})
       this.load_data();
     },
