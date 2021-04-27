@@ -3,7 +3,9 @@
     <el-space>
       <el-select v-model="filter_account" @change="do_filter">
         <el-option label="全部账户" :value="0"></el-option>
-        <el-option v-for="(accountName,accountId) of id_names.accounts" :key="accountId" :label="accountName" :value="parseInt(accountId)"></el-option>
+        <el-option-group v-for="(accounts, t) of account_group" :key="t" :label="t">
+          <el-option v-for="(account) of accounts" :key="account.ID" :label="account.Name" :value="account.ID"></el-option>
+        </el-option-group>
       </el-select>
 
       <el-date-picker v-model="filter_month" :default-value="filter_month" type="month" placeholder="选择月" @change="do_filter"></el-date-picker>
@@ -93,6 +95,7 @@ export default{
     }
 
     return {
+      account_group: {},
       filter_month: month,
       filter_account: account_id,//过滤的账户
       bills_by_day: new Map(),
@@ -195,6 +198,23 @@ export default{
 
         that.bills_by_day = bills_by_day
         that.bills_tree = bills_tree
+      })
+
+      axios.get("api/accounts").then(function (response) {
+        if (response.data.code!=0) {
+          //todo:提示错误信息
+          return
+        }
+
+        let account_group = {bank:[], virtual:[], debt: []}
+        for (let account of response.data.data) {
+          if (account.Hide) {
+            continue
+          }
+          account_group[account.Type].push(account)
+        }
+
+        that.account_group = account_group
       })
     }
   },
