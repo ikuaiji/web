@@ -1,12 +1,7 @@
 <template>
   <el-row>
     <el-space>
-      <el-select v-model="filter_account" @change="do_filter">
-        <el-option label="全部账户" :value="0"></el-option>
-        <el-option-group v-for="(accounts, t) of account_group" :key="t" :label="t">
-          <el-option v-for="(account) of accounts" :key="account.ID" :label="account.Name" :value="account.ID"></el-option>
-        </el-option-group>
-      </el-select>
+      <SelectAccount v-model="filter_account" @change="do_filter"></SelectAccount>
 
       <el-date-picker v-model="filter_month" :default-value="filter_month" type="month" placeholder="选择月" @change="do_filter"></el-date-picker>
     </el-space>
@@ -77,8 +72,12 @@
 
 <script>
 import axios from 'axios'
+import SelectAccount from '@/components/SelectAccount'
 
 export default{
+  components:{
+    SelectAccount,
+  },
   data() {
     let account_id = parseInt(this.$route.query.account_id);
     if (isNaN(account_id)) {

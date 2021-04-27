@@ -8,9 +8,7 @@
     </el-form-item>
 
     <el-form-item label="帐户">
-      <el-select v-model="bill.AccountId">
-        <el-option v-for="(name, id) in id_names.accounts" :key="id" :label="name" :value="parseInt(id)"></el-option>
-      </el-select>
+      <SelectAccount v-model="bill.AccountId"> </SelectAccount>
     </el-form-item>
 
     <el-form-item label="金额"><el-input v-model="bill.Amount" type="number" style="width:213px"/></el-form-item>
@@ -59,8 +57,12 @@
 
 <script>
 import axios from 'axios'
+import SelectAccount from '@/components/SelectAccount'
 
 export default{
+  components:{
+    SelectAccount,
+  },
   props:['id'],
   data() {
     return {
