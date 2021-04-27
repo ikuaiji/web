@@ -39,6 +39,21 @@
         </el-card>
       </el-space>
     </el-tab-pane>
+
+    <el-tab-pane label="隐藏账户">
+      <el-space wrap size="large">
+        <el-card v-for="iter of accounts.hidden" :key="iter.ID" >
+          <template #header>
+            {{iter.Name}}
+            <el-button class="button" type="text" icon="el-icon-edit" @click="edit_account(iter.ID)">编辑</el-button>
+          </template>
+
+          <h1><span style="color:gray;font-size:10px;">CNY:</span>{{get_balance(iter.ID)}}</h1>
+          <el-button class="button" type="text" icon="el-icon-document">对账</el-button>
+        </el-card>
+      </el-space>
+    </el-tab-pane>
+
   </el-tabs>
 </template>
 
@@ -52,6 +67,7 @@ export default{
         debt:[],
         bank:[],
         virtual:[],
+        hidden:[],
       },
       account_balances:{},
     }
@@ -86,9 +102,11 @@ export default{
       let debt=[]
       let bank=[]
       let virtual=[]
+      let hidden=[]
       for (const account of response.data.data) {
         if (account.Hide) {
-          continue;
+          hidden.push(account)
+          continue
         }
         switch(account.Type) {
           case "debt": debt.push(account); break;
@@ -100,6 +118,7 @@ export default{
       that.accounts.debt = debt
       that.accounts.bank = bank
       that.accounts.virtual = virtual
+      that.accounts.hidden = hidden
     })
   }
 }
